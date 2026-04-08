@@ -23,7 +23,7 @@ jobs:
     # 3️⃣ Install dependencies
     - name: Install Dependencies
       run: |
-        pip install numpy scikit-learn joblib xgboost
+        pip install numpy scikit-learn joblib xgboost pandas
 
     # 4️⃣ Train model
     - name: Train Model
