@@ -1,0 +1,54 @@
+name: AI Risk-Aware CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  risk-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # 1️⃣ Get code
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # 2️⃣ Setup Python
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # 3️⃣ Install dependencies
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    # 4️⃣ Train model
+    - name: Train Model
+      run: |
+        python train.py
+
+    # 5️⃣ Run prediction & save output
+    - name: Run Risk Prediction
+      run: |
+        python app.py > output.txt
+        cat output.txt
+
+    # 6️⃣ Upload results as artifact
+    - name: Upload Prediction Output
+      uses: actions/upload-artifact@v4
+      with:
+        name: risk-results
+        path: output.txt
+
+    # 7️⃣ Intelligent pipeline control 🔥
+    - name: Check Risk & Control Pipeline
+      run: |
+        if grep -q "Stop Pipeline" output.txt; then
+          echo "❌ High Risk Detected! Failing Pipeline..."
+          exit 1
+        else
+          echo "✅ Pipeline Safe"
+        fi
